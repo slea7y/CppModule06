@@ -1,19 +1,20 @@
 #include "ScalarConvert.hpp"
-#include <cctype>
-#include <cstddef>
-#include <cstdio>
-#include <cstdlib>
+#include <climits>
 #include <exception>
 #include <iomanip>
-#include <ios>
-#include <iostream>
-#include <string>
 #include <iosfwd>
-#include <stdio.h>
 
 ScalarConverte::ScalarConverte() {}
 
 ScalarConverte::~ScalarConverte() {}
+
+enum TYPE {
+	CHAR,
+	INT,
+	FLOAT,
+	DUBLE,
+	INVALID
+};
 
 bool isInt(std::string& string) {
 	try {
@@ -34,7 +35,8 @@ bool isDouble(std::string& string) {
 		std::stod(string, &pos);
 		if (pos == string.length())
 			return (true);
-		if (!string.compare("-inf") || !string.compare("+inf") || !string.compare("nan"))
+		if (!string.compare("-inf") || !string.compare("+inf")
+			|| !string.compare("nan"))
 			return (true);
 	}
 	catch (...) {
@@ -58,13 +60,22 @@ bool isFloat(std::string& string) {
 		if (pos == (string.length() - 1)
 			&& string.at(string.length() - 1) == 'f')
 			return (true);
-		if (!string.compare("-inff") || !string.compare("+inff") || !string.compare("nanf"))
+		if (!string.compare("-inff") || !string.compare("+inff")
+			|| !string.compare("nanf"))
 			return (true);
 	}
 	catch (std::exception &e){
 		return (false);
 	}
 	return (false);
+}
+
+void handleChar(std::string& string) {
+	(void)string;
+}
+
+void handleDouble(std::string& string) {
+	(void)string;
 }
 
 
@@ -83,45 +94,50 @@ void handleInt(std::string& string) {
 
 void handleFloat(std::string& string) {
 	float f = std::stof(string);
-	char c = (char)f;
-	int i = (int)f;
-	double d = (double)f;
+	char c = static_cast<char>(f);
+	int i = static_cast<int>(f);
+	double d = static_cast<double>(f);
 	size_t precision = string.length() - string.find(".") - 2;
 
-	if (f > 19 && f < 127)
+	if (f > 32 && f < 127)
 		std::cout << "char: '" << c << "'"<< std::endl;
+	else if (!string.compare("-inff") || !string.compare("+inff")
+		|| !string.compare("nanf")) 
+		std::cout << "char: " << "impossible" << std::endl;
 	else 
 		std::cout << "char: Non displayable" << std::endl;
-	std::cout << "int: " << i << std::endl;
-	std::cout << "float: " << std::setprecision(precision) << std::fixed << f << "f" << std::endl;
+	if (i > INT_MIN && i < INT_MAX)
+		std::cout << "int: " << i << std::endl;
+	else 
+		std::cout << "int: " << "impossible" << std::endl;
+	std::cout << "float: " << std::setprecision(precision)
+				<< std::fixed << f << "f" << std::endl;
 	std::cout << "double: " << d << std::endl;
 }
 
+void detectType(TYPE *type, std::string& string) {
+	if (isChar(string))
+		*type = CHAR;
+	else if (isInt(string))
+		*type = INT;
+	else if (isFloat(string))
+		*type = FLOAT;
+	else if (isDouble(string))
+		*type = DUBLE;
+}
+
+void printFloat(TYPE *type, std::string& string) {
+	if (*type == FLOAT)
+
+}
+
 void ScalarConverte::convert(std::string& string) {
-	// int i = 0;
-	if (isChar(string)) {
-		std::cout << "yayy its char" << std::endl ;
-	}
-	else if (isInt(string)) {
-		// i = 2;
-		std::cout << "yayy its int" << std::endl ;
-		handleInt(string);
-	}
-	else if (isFloat(string)) {
-		// i = 3;
-		std::cout << "yayy its float" << std::endl ;
-		handleFloat(string);
-	}
-	else if (isDouble(string)) {
-		// i = 4;
-		string = std::stoi(string);
-		std::cout << "yayy its double" << std::endl ;
-	}
-
-
-	// std::cout << "char: " << string << std::endl ;
-	// std::cout << "int: " << string << std::endl ;
-	// std::cout << "float: " << string << std::endl ;
-	// std::cout << "double: " << string << std::endl ;
-	// else ()
+	TYPE type;
+	
+	detectType(&type, string);
+	printChar(type, string);
+	printInt(type, string);
+	printFloat(type, string);
+	printDouble(type, string);
+	// std::cout << type << std::endl ;
 }
