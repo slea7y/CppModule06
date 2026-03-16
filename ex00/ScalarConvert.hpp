@@ -1,9 +1,11 @@
 #include <iostream>
 
 class ScalarConverte {
- 	private:
-		ScalarConverte();
-	public:
+ 	public:	
 		virtual ~ScalarConverte();
 		static void convert(std::string& string);
+	private:
+		ScalarConverte();
+		ScalarConverte(const ScalarConverte& other);
+		ScalarConverte operator=(const ScalarConverte& other);
 };

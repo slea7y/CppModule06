@@ -12,7 +12,7 @@ enum TYPE {
 	CHAR,
 	INT,
 	FLOAT,
-	DUBLE,
+	DOUBLE,
 	INVALID
 };
 
@@ -24,22 +24,6 @@ bool isInt(std::string& string) {
 			return (true);
 	}
 	catch (std::exception &e) {
-		return (false);
-	}
-	return (false);
-}
-
-bool isDouble(std::string& string) {
-	try {
-		size_t pos = 0;
-		std::stod(string, &pos);
-		if (pos == string.length())
-			return (true);
-		if (!string.compare("-inf") || !string.compare("+inf")
-			|| !string.compare("nan"))
-			return (true);
-	}
-	catch (...) {
 		return (false);
 	}
 	return (false);
@@ -70,26 +54,55 @@ bool isFloat(std::string& string) {
 	return (false);
 }
 
+bool isDouble(std::string& string) {
+	try {
+		size_t pos = 0;
+		std::stod(string, &pos);
+		if (pos == string.length())
+			return (true);
+		if (!string.compare("-inf") || !string.compare("+inf")
+			|| !string.compare("nan"))
+			return (true);
+	}
+	catch (...) {
+		return (false);
+	}
+	return (false);
+}
+
 void handleChar(std::string& string) {
-	(void)string;
+	char c = static_cast<char>(string[0]);
+	int i = static_cast<int>(c);
+	float f = static_cast<float>(c);
+	double d = static_cast<double>(c);
+	
+	std::cout << "char: '" << c << "'"<< std::endl;
+	if (i > INT_MIN && i < INT_MAX)
+		std::cout << "int: " << i << std::endl;
+	else 
+		std::cout << "int: " << "impossible" << std::endl;
+	std::cout << "float: " << std::setprecision(1)
+				<< std::fixed << f << "f" << std::endl;
+	std::cout << "double: " << d << std::endl;
 }
-
-void handleDouble(std::string& string) {
-	(void)string;
-}
-
 
 void handleInt(std::string& string) {
 	int i = std::stoi(string);
-
-	// i = 'a';
-	// char c = static_cast<char>(i);
-
-	float f = static_cast<float>(i) + 0.0f;
-	std::cout << "char: " << "Non displayable" << std::endl;
-	std::cout << "int: " << i << std::endl;
-	std::cout << "float: " << f << std::endl;
-	std::cout << "double: " << i << std::endl;
+	char c = static_cast<char>(i);
+	float f = static_cast<float>(i);
+	double d = static_cast<double>(i);
+	
+	if (i > 32 && i < 127)
+		std::cout << "char: '" << c << "'"<< std::endl;
+	else
+		std::cout << "char: Non displayable" << std::endl;
+	if (i > INT_MIN && i < INT_MAX)
+		std::cout << "int: " << i << std::endl;
+	else 
+		std::cout << "int: " << "impossible" << std::endl;
+	std::cout << "float: " << std::setprecision(1)
+				<< std::fixed << f << "f" << std::endl;
+	std::cout << "double: " << d << std::endl;
 }
 
 void handleFloat(std::string& string) {
@@ -115,6 +128,29 @@ void handleFloat(std::string& string) {
 	std::cout << "double: " << d << std::endl;
 }
 
+void handleDouble(std::string& string) {
+	double d = std::stod(string);
+	char c = static_cast<char>(d);
+	int i = static_cast<int>(d);
+	float f = static_cast<float>(d);
+	size_t precision = string.length() - string.find(".") - 1;
+
+	if (d > 32 && d < 127)
+		std::cout << "char: '" << c << "'"<< std::endl;
+	else if (!string.compare("-inf") || !string.compare("+inf")
+		|| !string.compare("nan")) 
+		std::cout << "char: " << "impossible" << std::endl;
+	else 
+		std::cout << "char: Non displayable" << std::endl;
+	if (i > INT_MIN && i < INT_MAX)
+		std::cout << "int: " << i << std::endl;
+	else 
+		std::cout << "int: " << "impossible" << std::endl;
+	std::cout << "float: " << std::setprecision(precision)
+				<< std::fixed << f << "f" << std::endl;
+	std::cout << "double: " << d << std::endl;
+}
+
 void detectType(TYPE *type, std::string& string) {
 	if (isChar(string))
 		*type = CHAR;
@@ -123,21 +159,26 @@ void detectType(TYPE *type, std::string& string) {
 	else if (isFloat(string))
 		*type = FLOAT;
 	else if (isDouble(string))
-		*type = DUBLE;
-}
-
-void printFloat(TYPE *type, std::string& string) {
-	if (*type == FLOAT)
-
+		*type = DOUBLE;
+	else
+		*type = INVALID;
 }
 
 void ScalarConverte::convert(std::string& string) {
 	TYPE type;
 	
 	detectType(&type, string);
-	printChar(type, string);
-	printInt(type, string);
-	printFloat(type, string);
-	printDouble(type, string);
-	// std::cout << type << std::endl ;
+	switch (type) {
+		case CHAR:
+			return handleChar(string);
+		case INT:
+			return handleInt(string);
+		case FLOAT:
+			return handleFloat(string);
+		case DOUBLE:
+			return handleDouble(string);
+		case INVALID:
+			std::cout << "Invalid input 😔😔😔!" << std::endl ;
+	}
+	
 }
