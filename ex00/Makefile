@@ -1,6 +1,5 @@
 CXX := c++
-# CXXFLAGS := -Wall -Wextra -Werror -std=c++17
-CXXFLAGS := 
+CXXFLAGS := -Wall -Wextra -Werror -std=c++17
 
 NAME := type
 SRC = main.cpp ScalarConvert.cpp
