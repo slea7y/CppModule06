@@ -5,6 +5,19 @@
 // conversions are allowed: neither the content pointed nor the pointer type itself is checked.
 
 
+Serializer::Serializer() {}
+
+Serializer::Serializer(const Serializer& other) {
+	(void)other;
+}
+
+Serializer &Serializer::operator=(const Serializer& other) {
+	(void)other;
+	return *this;
+}
+
+Serializer::~Serializer() {}
+
 Data* Serializer::deserialize(uintptr_t raw) {
 	return reinterpret_cast<Data *>(raw);
 }
@@ -13,3 +26,4 @@ Data* Serializer::deserialize(uintptr_t raw) {
 uintptr_t Serializer::serialize(Data *ptr) {
 	return reinterpret_cast<uintptr_t>(ptr);
 }
+

@@ -21,7 +21,7 @@ bool isInt(const std::string& string) {
 bool isChar(const std::string& string) {
 	if (string.length() != 1)
 		return (false);
-	if (!isascii(string.at(0)) || std::isdigit(string.at(0))) 
+	if ((!isascii(string.at(0)) || std::isdigit(string.at(0)))) 
 		return (false);
 	return (true);
 }
